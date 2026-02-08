@@ -1,4 +1,4 @@
 pos,score,alignment
-70,0.99,Human:A,Mouse:A,Chimp:A
-142,0.95,Human:G,Mouse:G,Chimp:G
-200,0.4,Human:C,Mouse:A,Chimp:C
+30,0.1,Human:T,Mouse:A,Chimp:A
+90,0.99,Human:C,Mouse:C,Chimp:C
+150,0.99,Human:T,Mouse:T,Chimp:T

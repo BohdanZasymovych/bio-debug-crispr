@@ -13,7 +13,9 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["agents*", "tools*", "prompts*", "utils*"]
+where = ["."]
+include = ["agents*", "tools*", "prompts*", "utils*", "main*", "app*"]
 
 [project.scripts]
+run_app = "main:main"
 engineer = "agents.engineer:main"

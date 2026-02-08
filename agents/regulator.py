@@ -6,16 +6,9 @@ Responsibility: Validates CRISPR designs and has authority to REJECT unsafe ther
 """
 
 import json
-from pathlib import Path
 from anthropic import Anthropic
-from dotenv import load_dotenv
 from tools import regulator_tools
-from utils.utils import get_api_key
 from prompts.regulator_prompt import REGULATOR_PROMPT
-
-# Initialize environment
-project_root = Path(__file__).resolve().parent.parent
-load_dotenv(project_root / ".env")
 
 
 def analyze_safety(therapy_design: dict) -> dict:
@@ -86,35 +79,62 @@ def analyze_safety(therapy_design: dict) -> dict:
     }
 
 
-def run_regulator_agent(therapy_design: dict, api_key: str) -> dict:
+def analyze_all_candidates(engineer_report: dict) -> list:
     """
-    Main entry point for the Regulator agent.
-    Analyzes therapy safety and returns AI-reasoned decision.
-    
-    Args:
-        therapy_design: CRISPR therapy design from Engineer agent
-        api_key: Anthropic API key
-        
-    Returns:
-        Dict with decision (APPROVE/REJECT), reasoning, and safety report
+    For each gRNA candidate in the engineer's report, run all safety and efficiency checks.
+    Returns a list of dicts with all metrics for LLM ranking.
     """
+    target_gene = engineer_report.get('target_gene', 'Unknown')
+    candidates = engineer_report.get('candidates', [])
+    genome_sequence = engineer_report.get('genome_sequence', '')  # Optionally pass genome if needed
+    ranked_data = []
+    for cand in candidates:
+        grna_seq = cand.get('spacer_sequence', '')
+        pam_seq = cand.get('pam_sequence', '')
+        repair_template = cand.get('repair_template', '')
+        efficiency_score = cand.get('efficiency_score', 0)
+        pam_index = cand.get('pam_index', None)
+        mutation_index = cand.get('mutation_index', None)
+
+        # Safety checks
+        off_targets = regulator_tools.blast_genome_search(grna_seq, genome_sequence) if genome_sequence else []
+        pam_shield = regulator_tools.verify_pam_shield(repair_template, pam_index, mutation_index)
+        struct_risk = regulator_tools.analyze_structure_risk(grna_seq)
+        safety_metrics = regulator_tools.calculate_safety_score(
+            off_targets, pam_shield, struct_risk, target_gene
+        )
+        ranked_data.append({
+            "gRNA": grna_seq,
+            "pam": pam_seq,
+            "safety_score": safety_metrics['score'],
+            "efficiency_score": efficiency_score,
+            "risk_level": safety_metrics['risk_level'],
+            "recommendation": safety_metrics['recommendation'],
+            "issues": safety_metrics['issues'],
+            "reasoning": "",  # LLM will fill this in
+            "raw": cand  # Optionally keep all original candidate data
+        })
+    return ranked_data
+
+
+def run_regulator_agent(engineer_report: dict, api_key: str) -> dict:
     print("=" * 70)
-    print("🛡️  REGULATOR AGENT - SAFETY VALIDATION")
+    print("🛡️  REGULATOR AGENT - SAFETY VALIDATION (MULTI-GRNA)")
     print("=" * 70)
-    
-    print("\n📊 Computing safety metrics...")
-    safety_data = analyze_safety(therapy_design)
-    
+
+    print("\n📊 Computing safety metrics for all candidates...")
+    ranked_data = analyze_all_candidates(engineer_report)
+
     # Prepare analysis report for LLM
     analysis_report = json.dumps({
-        "therapy_design": therapy_design,
-        "safety_analysis": safety_data
+        "target_gene": engineer_report.get('target_gene', 'Unknown'),
+        "ranked_candidates": ranked_data
     }, indent=2)
-    
-    print(f"\n🤖 Consulting AI for decision...")
-    
+
+    print(f"\n🤖 Consulting AI for ranking and decision...")
+
     client = Anthropic(api_key=api_key)
-    
+
     response = client.messages.create(
         model="claude-sonnet-4-20250514",
         max_tokens=2000,
@@ -126,55 +146,14 @@ def run_regulator_agent(therapy_design: dict, api_key: str) -> dict:
             )
         }]
     )
-    
-    print("\n🛡️  FINAL DECISION:\n")
+
+    print("\n🛡️  FINAL RANKED DECISION:\n")
     report = response.content[0].text
     print(report)
-    
-    # Parse the LLM response
+
     try:
-        decision_data = json.loads(report)
+        ranked_result = json.loads(report)
     except json.JSONDecodeError:
-        # If LLM didn't return valid JSON, fall back to safety metrics
-        decision_data = {
-            "decision": safety_data['safety_metrics']['recommendation'],
-            "safety_score": safety_data['safety_metrics']['score'],
-            "risk_level": safety_data['safety_metrics']['risk_level'],
-            "reasoning": safety_data['safety_metrics'].get('reason', ''),
-            "llm_analysis": report
-        }
-    
-    return {
-        "therapy_design": therapy_design,
-        "safety_analysis": safety_data,
-        "decision": decision_data
-    }
+        ranked_result = {"error": "LLM output not valid JSON", "llm_output": report}
 
-
-def main():
-    """Entry point for CLI script."""
-    
-    # Example therapy design (from Engineer agent)
-    example_therapy = {
-        "target_gene": "HBB",
-        "mutation_location": "chr11:5246696",
-        "guide_rna": {
-            "spacer_sequence": "GTGCACCTGACTCCTGAGGA",
-            "pam_sequence": "AGG",
-            "gc_content": 55
-        },
-        "cas_variant": "High-Fidelity Cas9",
-        "repair_template": "GTGCACCTGACTCCTGAGGAGAAGTCTGCC",
-        "efficiency_score": 78
-    }
-    
-    result = run_regulator_agent(example_therapy, get_api_key())
-    
-    print("\n" + "=" * 70)
-    print("VALIDATION RESULT:")
-    print("=" * 70)
-    print(json.dumps(result['decision'], indent=2))
-
-
-if __name__ == "__main__":
-    main()
+    return ranked_result

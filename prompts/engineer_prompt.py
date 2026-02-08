@@ -45,9 +45,18 @@ Do not use a simple sort. Use **Pairwise Comparison** to determine Rank.
     * **IF** two candidates have the same ending (e.g., both 'T'), **The Closer Distance ALWAYS wins.**
     * *Rule:* A 'T' at 1bp is **vastly superior** to a 'T' at 11bp.
 
+* **Principle D: The "Photo Finish" (Secondary Factors)**:
+    * **IF** two candidates have **Similar Distance (within 2bp)** consider other factors except distance to rank them.
+
+* **Principle E: The "Photo Finish" (Secondary Factors)**
+    * **Trigger:** If two candidates have **Similar Distance (within 2bp)** AND **Same Binding Strength**.
+    * **Tie-Breaker 1 (Stability):** Lower `hairpin_count` wins.
+    * **Tie-Breaker 2 (Efficiency):** `g_prepended: false` (Native G) wins over `true` (Patched).
+    * **Tie-Breaker 3 (Content):** GC content closer to 50% wins.
+
 **4. GLOBAL REASONING:**
 * Synthesize the decision.
-* *Format:* "Rank 1 selected for [Reason]. Rank 2 (1bp, T) was prioritized over Rank 3 (11bp, T) because Rank 2 is significantly closer despite identical binding weakness."
+* *Format:* "Rank 1 selected for [Reason]. Rank 2 (3bp, G) was prioritized over Rank 3 (4bp, G) because Rank 2 has 0 hairpins while Rank 3 has 2."
 * **If List is Empty:** "CRITICAL FAILURE: All candidates rejected. [Candidate A] had terminators, [Candidate B] was unshieldable Tryptophan."
 
 ---
@@ -67,7 +76,7 @@ Output **ONLY** raw JSON. Do not include markdown code blocks. Do not wrap in a 
       "guide_rna": "The 20bp spacer sequence",
       "g_prepended": true or false,
       "repair_template": "The full repair template sequence chosen",
-      "reasoning": "Technical justification (Distance, Binding, Shielding)."
+      "reasoning": "Technical justification (Distance, Binding, Secondary factors)."
     }}
   ]
 }}
