@@ -1,0 +1,4 @@
+##fileformat=VCFv4.2
+#CHROM POS ID      REF ALT INFO
+11     70  rs334   A   T   CLNSIG=Pathogenic;DIS=Sickle_Cell
+11     142 rs999   G   A   CLNSIG=Conflicting_Interpretations

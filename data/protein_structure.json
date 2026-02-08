@@ -1,0 +1,5 @@
+{
+  "70": {"region": "Helix", "buried": true, "function": "Core Stability"},
+  "142": {"region": "Splice_Donor", "buried": false, "function": "mRNA Processing"},
+  "200": {"region": "Disordered_Loop", "buried": false, "function": "None"}
+}
