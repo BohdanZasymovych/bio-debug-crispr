@@ -1,0 +1,261 @@
+:root {
+  --bg: #0b0f19;
+  --panel: #111827;
+  --mut-red: #FF4B4B;
+  --mut-blue: #00BFFF;
+  --text: #E5E7EB;
+  --mut-grey: #808080;
+  --border: rgba(255,255,255,0.08);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.stApp { background: var(--bg); color: var(--text); }
+h1,h2,h3,h4,h5,h6,p,label,div { color: var(--text) !important; }
+
+.crispr-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 14px 10px 14px;
+}
+
+.dna-box {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.dna-base { color: var(--mut-grey); padding: 0 1px; border-radius: 4px; }
+.dna-critical { background: var(--mut-red); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
+.dna-benign { background: var(--mut-blue); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
+
+.log-box {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.log-line { margin: 0 0 6px 0; }
+.log-ts { color: rgba(229,231,235,0.55); margin-right: 8px; }
+
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+/* ===== CRISPR Manufacturing Kit text visibility fix ===== */
+
+/* Text inside input fields */
+.stTextInput input,
+.stTextArea textarea {
+  color: #000000 !important;        /* чорний текст */
+  font-weight: 600;
+}
+
+/* Placeholder text (якщо десь ще використовується) */
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+  color: #6b7280;                   /* темно-сірий */
+  opacity: 1;
+}
+
+/* Disabled / read-only inputs */
+.stTextInput input:disabled,
+.stTextArea textarea:disabled {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* ===== Fix Streamlit st.code visibility (Manufacturing Kit) ===== */
+
+/* Streamlit code block container */
+pre {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  border-radius: 12px !important;
+}
+
+/* Actual code text */
+pre code {
+  color: #000000 !important;      /* чорний */
+  font-weight: 600 !important;
+  font-family: var(--mono) !important;
+}
+
+/* Sometimes Streamlit wraps code in this div */
+div[data-testid="stCodeBlock"] pre code {
+  color: #000000 !important;
+}
+
+/* ===== RESET button visibility ===== */
+
+
+
+/* ===== Global text contrast boost ===== */
+label, span, p {
+  color: #e5e7eb;
+}
+
+
+/* ===== Force button text color (Streamlit) ===== */
+
+/* All Streamlit buttons */
+div[data-testid="stButton"] button,
+div[data-testid="stDownloadButton"] button {
+  color: #0b0f19 !important;         /* чорний текст */
+  font-weight: 700 !important;
+}
+
+/* Text inside buttons (Streamlit wraps it) */
+div[data-testid="stButton"] button * ,
+div[data-testid="stDownloadButton"] button * {
+  color: #0b0f19 !important;
+}
+div[data-testid="stCheckbox"] label,
+div[data-testid="stCheckbox"] label * {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* ===== Analyze & Design Cure button (neutral style) ===== */
+
+/* only the main action button */
+div[data-testid="stButton"] button {
+  background: #e5e7eb !important;   /* світло-сірий */
+  color: #0b0f19 !important;        /* чорний текст */
+  border: 1px solid #9ca3af !important;
+  font-weight: 700 !important;
+}
+
+/* text inside */
+div[data-testid="stButton"] button * {
+  color: #0b0f19 !important;
+}
+
+/* ===== FORCE BLACK TEXT ON ALL BUTTONS (GLOBAL) ===== */
+
+/* All buttons */
+button,
+button * {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Streamlit-specific buttons */
+div[data-testid="stButton"] button,
+div[data-testid="stDownloadButton"] button,
+div[data-testid="stFormSubmitButton"] button {
+  color: #000000 !important;
+}
+
+div[data-testid="stButton"] button *,
+div[data-testid="stDownloadButton"] button *,
+div[data-testid="stFormSubmitButton"] button * {
+  color: #000000 !important;
+}
+
+/* Expander header button (Agent Reasoning Logs) */
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary * {
+  color: #000000 !important;
+}
+
+div[data-testid="stExpander"] summary svg {
+  fill: #000000 !important;
+}
+
+/* ===== FORCE BLACK TEXT IN DISABLED / READONLY INPUTS ===== */
+
+/* Text inputs & text areas (enabled or disabled) */
+.stTextInput input,
+.stTextArea textarea,
+.stTextInput input:disabled,
+.stTextArea textarea:disabled {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;          /* <-- ОЦЕ КЛЮЧОВЕ */
+  font-weight: 700 !important;
+}
+
+/* Also kill any inner opacity */
+.stTextInput,
+.stTextArea {
+  opacity: 1 !important;
+}
+
+/* Placeholder / faded value */
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+/* ===== FORCE BLACK TEXT IN READONLY / DISABLED INPUTS (FINAL FIX) ===== */
+
+/* All Streamlit text inputs & textareas */
+.stTextInput input,
+.stTextArea textarea {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important; /* <-- КЛЮЧОВЕ */
+  opacity: 1 !important;
+  font-weight: 700 !important;
+  background-color: #ffffff !important;
+}
+
+/* Explicit disabled state */
+.stTextInput input:disabled,
+.stTextArea textarea:disabled {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
+  background-color: #ffffff !important;
+}
+
+/* Kill wrapper opacity */
+.stTextInput,
+.stTextArea {
+  opacity: 1 !important;
+}
+
+/* ===== FORCE BLACK TEXT IN Streamlit st.code blocks ===== */
+div[data-testid="stCodeBlock"] pre,
+div[data-testid="stCodeBlock"] code,
+div[data-testid="stCodeBlock"] pre code {
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+/* на випадок, якщо Streamlit кладе code не в stCodeBlock */
+pre, pre code, code {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.badge-ok { border-color: rgba(16,185,129,0.45); }
+.badge-warn { border-color: rgba(245,158,11,0.45); }
+.badge-bad { border-color: rgba(239,68,68,0.45); }
