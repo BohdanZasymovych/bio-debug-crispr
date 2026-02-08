@@ -1,5 +1,12 @@
 {
-  "70": {"region": "Helix", "buried": true, "function": "Core Stability"},
-  "142": {"region": "Splice_Donor", "buried": false, "function": "mRNA Processing"},
-  "200": {"region": "Disordered_Loop", "buried": false, "function": "None"}
+  "90": {
+    "region": "Alpha_Helix",
+    "buried": true,
+    "function": "Structural"
+  },
+  "150": {
+    "region": "Active_Site",
+    "buried": false,
+    "function": "Binding"
+  }
 }

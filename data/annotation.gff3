@@ -1,4 +1,5 @@
 ##gff-version 3
-# SeqId  Source  Type    Start  End    Score  Strand  Phase  Attributes
-NM_000518 RefSeq  exon    1      142    .      +       .      ID=exon-1
-NM_000518 RefSeq  intron  143    273    .      +       .      ID=intron-1
+# SeqId	Source	Type	Start	End	Score	Strand	Phase	Attributes
+Patient_Mutations	RefSeq	exon	1	20	.	+	.	ID=exon-1
+Patient_Mutations	RefSeq	intron	21	60	.	+	.	ID=intron-1
+Patient_Mutations	RefSeq	exon	61	200	.	+	.	ID=exon-2

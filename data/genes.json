@@ -1,0 +1,57 @@
+{
+  "TP53": {
+    "function": "Tumor suppressor - prevents cancer",
+    "risk": "CRITICAL",
+    "category": "Cancer Prevention"
+  },
+  "BRCA1": {
+    "function": "DNA repair - prevents breast/ovarian cancer",
+    "risk": "CRITICAL",
+    "category": "Cancer Prevention"
+  },
+  "BRCA2": {
+    "function": "DNA repair - maintains genome stability",
+    "risk": "CRITICAL",
+    "category": "Cancer Prevention"
+  },
+  "TTN": {
+    "function": "Cardiac muscle contraction",
+    "risk": "CRITICAL",
+    "category": "Heart Function"
+  },
+  "MYH7": {
+    "function": "Heart muscle protein - critical for heartbeat",
+    "risk": "CRITICAL",
+    "category": "Heart Function"
+  },
+  "SCN5A": {
+    "function": "Cardiac sodium channel - heart rhythm",
+    "risk": "CRITICAL",
+    "category": "Heart Function"
+  },
+  "CFTR": {
+    "function": "Chloride channel - lung function",
+    "risk": "HIGH",
+    "category": "Respiratory"
+  },
+  "DMD": {
+    "function": "Muscle structure - prevents muscular dystrophy",
+    "risk": "HIGH",
+    "category": "Neuromuscular"
+  },
+  "PTEN": {
+    "function": "Tumor suppressor",
+    "risk": "CRITICAL",
+    "category": "Cancer Prevention"
+  },
+  "HBB": {
+    "function": "Beta-globin - oxygen transport",
+    "risk": "MODERATE",
+    "category": "Blood Function"
+  },
+  "HBD": {
+    "function": "Delta-globin - HBB paralog",
+    "risk": "MODERATE",
+    "category": "Blood Function"
+  }
+}
