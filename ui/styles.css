@@ -1,16 +1,42 @@
+/* ===== Increase contrast for Browse files label ===== */
+div[data-testid="stFileUploader"] label,
+div[data-testid="stFileUploader"] label * {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* ===== Increase contrast for Agent Reasoning Logs expander ===== */
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary * {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
 :root {
   --bg: #0b0f19;
   --panel: #111827;
   --mut-red: #FF4B4B;
   --mut-blue: #00BFFF;
+  --mut-green: #10B981;
+  --mut-yellow: #F59E0B;
   --text: #E5E7EB;
   --mut-grey: #808080;
   --border: rgba(255,255,255,0.08);
+
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .stApp { background: var(--bg); color: var(--text); }
-h1,h2,h3,h4,h5,h6,p,label,div { color: var(--text) !important; }
+h1,h2,h3,h4,h5,h6,p,label,div,span,th,td,li,ul,ol,strong,b { color: var(--text) !important; }
+
+input, textarea, .stTextInput, .stTextArea, .stFileUploader, .stButton, .stDownloadButton, .stCheckbox, .stSelectbox, .stExpander, .stCaption, .stMarkdown, .stRadio, .stSlider, .stNumberInput, .stDateInput, .stTimeInput, .stColorPicker {
+  color: var(--text) !important;
+  background: var(--panel) !important;
+  border-color: var(--border) !important;
+}
+
+.stApp, .stMarkdown, .stTextInput, .stTextArea, .stFileUploader, .stButton, .stDownloadButton, .stCheckbox, .stSelectbox, .stExpander, .stCaption, .stRadio, .stSlider, .stNumberInput, .stDateInput, .stTimeInput, .stColorPicker {
+  background: var(--bg) !important;
+}
 
 .crispr-panel {
   background: var(--panel);
@@ -35,7 +61,10 @@ h1,h2,h3,h4,h5,h6,p,label,div { color: var(--text) !important; }
 
 .dna-base { color: var(--mut-grey); padding: 0 1px; border-radius: 4px; }
 .dna-critical { background: var(--mut-red); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
+.dna-warning { background: var(--mut-yellow); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
+.dna-safe { background: var(--mut-green); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
 .dna-benign { background: var(--mut-blue); color: #0b0f19; padding: 0 2px; border-radius: 4px; }
+
 
 .log-box {
   font-family: var(--mono);
@@ -146,6 +175,7 @@ div[data-testid="stButton"] button {
   color: #0b0f19 !important;        /* чорний текст */
   border: 1px solid #9ca3af !important;
   font-weight: 700 !important;
+  margin-top: 18px !important;
 }
 
 /* text inside */
@@ -178,11 +208,11 @@ div[data-testid="stFormSubmitButton"] button * {
 /* Expander header button (Agent Reasoning Logs) */
 div[data-testid="stExpander"] summary,
 div[data-testid="stExpander"] summary * {
-  color: #000000 !important;
+  color: #ffffff !important;
 }
 
 div[data-testid="stExpander"] summary svg {
-  fill: #000000 !important;
+  fill: #ffffff !important;
 }
 
 /* ===== FORCE BLACK TEXT IN DISABLED / READONLY INPUTS ===== */
@@ -259,3 +289,51 @@ pre, pre code, code {
 .badge-ok { border-color: rgba(16,185,129,0.45); }
 .badge-warn { border-color: rgba(245,158,11,0.45); }
 .badge-bad { border-color: rgba(239,68,68,0.45); }
+
+/* Fixed-size scrollable log container for running pipeline */
+.log-container-running pre {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+}
+
+.log-container-running div[data-testid="stCodeBlock"] {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+.log-container-running div[data-testid="stCodeBlock"] pre {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+/* Live log box during pipeline execution */
+.log-box-live {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* ===== WHITE TEXT OVERRIDES ===== */
+
+/* Browse files button */
+div[data-testid="stFileUploader"] button,
+div[data-testid="stFileUploader"] button * {
+   color: #ffffff !important;
+}
+
+/* Download button */
+div[data-testid="stDownloadButton"] button,
+div[data-testid="stDownloadButton"] button * {
+   color: #ffffff !important;
+   border-color: rgba(255,255,255,0.3) !important;
+}

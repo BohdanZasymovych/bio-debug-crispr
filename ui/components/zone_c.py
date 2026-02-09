@@ -56,13 +56,4 @@ def render_zone_c(
                 st.markdown("#### Final result JSON")
                 st.code(json.dumps(final_result, indent=2), language="json")
 
-        # Download output.json (if available)
-        if final_result is not None:
-            st.download_button(
-                "Download output.json",
-                data=json.dumps(final_result, indent=2),
-                file_name="output.json",
-                mime="application/json",
-            )
-
     st.markdown("</div>", unsafe_allow_html=True)

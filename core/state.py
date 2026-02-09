@@ -17,6 +17,7 @@ def init_session_state() -> None:
         "result_json": None,       # dict | None
         "annotations": [],         # list[dict] for DNA visualizer
         "ui_locked": False,        # prevents editing while running
+        "agent_logs": [],          # list[str] for backend logs
     }
 
     for k, v in defaults.items():
@@ -35,3 +36,4 @@ def reset_session_state() -> None:
     st.session_state.result_json = None
     st.session_state.annotations = []
     st.session_state.ui_locked = False
+    st.session_state.agent_logs = []

@@ -21,7 +21,17 @@ def _render_dna_html(seq: str, annotations: List[Dict[str, Any]]) -> str:
         safe_ch = html.escape(ch)
         if i in ann_map:
             a = ann_map[i]
-            cls = "dna-critical" if a.get("type") == "critical" else "dna-benign"
+            # Map semantic type to CSS class
+            t = a.get("type", "benign")
+            if t == "critical":
+                cls = "dna-critical"
+            elif t == "warning":
+                cls = "dna-warning"
+            elif t == "safe":
+                cls = "dna-safe"
+            else:
+                cls = "dna-benign"
+
             tooltip = html.escape(a.get("tooltip") or "")
             chunks.append(f'<span class="{cls}" title="{tooltip}">{safe_ch}</span>')
         else:
@@ -42,28 +52,25 @@ def render_zone_a(
     st.markdown("### ZONE A: PATIENT GENOME")
 
     # --- Sequence loader
-    col_up, col_txt = st.columns([1, 2])
-    with col_up:
-        uploaded = st.file_uploader("Upload FASTA", type=["fasta", "fa", "txt"], disabled=ui_locked)
-    with col_txt:
-        dna_raw = st.text_area(
-            "Paste DNA",
-            value=st.session_state.get("dna_raw", ""),
-            height=120,
-            placeholder="Paste DNA sequence (A/C/G/T/N)...",
-            disabled=ui_locked,
-        )
 
-    # If file uploaded, read it and overwrite dna_raw
+
+    uploaded = st.file_uploader("Upload FASTA", type=["fasta", "fa", "txt"], disabled=ui_locked)
+    dna_raw = st.session_state.get("dna_raw", "")
     if uploaded is not None and not ui_locked:
-        content = uploaded.read()
-        parsed = load_uploaded_fasta(content)
-        st.session_state.dna_raw = parsed
-        dna_raw = parsed
-        st.rerun()
-
-    # Persist textarea changes
-    st.session_state.dna_raw = dna_raw
+        # Only parse and update if new file uploaded
+        if (
+            "uploaded_fasta_file" not in st.session_state
+            or st.session_state.uploaded_fasta_file != uploaded
+        ):
+            content = uploaded.read()
+            parsed = load_uploaded_fasta(content)
+            st.session_state.dna_raw = parsed
+            st.session_state.uploaded_fasta_file = uploaded
+            dna_raw = parsed
+        else:
+            dna_raw = st.session_state.get("dna_raw", "")
+    else:
+        dna_raw = st.session_state.get("dna_raw", "")
 
     dna_norm = normalize_dna(dna_raw)
     st.session_state.dna_norm = dna_norm

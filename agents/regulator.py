@@ -118,10 +118,6 @@ def analyze_all_candidates(engineer_report: dict) -> list:
 
 
 def run_regulator_agent(engineer_report: dict, api_key: str) -> dict:
-    print("=" * 70)
-    print("🛡️  REGULATOR AGENT - SAFETY VALIDATION (MULTI-GRNA)")
-    print("=" * 70)
-
     print("\n📊 Computing safety metrics for all candidates...")
     ranked_data = analyze_all_candidates(engineer_report)
 
@@ -147,12 +143,42 @@ def run_regulator_agent(engineer_report: dict, api_key: str) -> dict:
         }]
     )
 
-    print("\n🛡️  FINAL RANKED DECISION:\n")
     report = response.content[0].text
-    print(report)
 
     try:
         ranked_result = json.loads(report)
+        
+        print("\n🛡️  REGULATOR VALIDATION:")
+        print("-" * 40)
+        
+        candidates = ranked_result.get("ranked_candidates", [])
+        if candidates:
+            # Report on the top ranked candidate
+            top = candidates[0]
+            score = top.get("safety_score", 0)
+            risk = top.get("risk_level", "UNKNOWN")
+            rec = top.get("recommendation", "UNKNOWN")
+            
+            status_moji = "✅" if rec == "APPROVE" else "❌"
+            
+            print(f"{status_moji}  DECISION: {rec} (Top Candidate)")
+            print(f"📊  SAFETY SCORE: {score}/100")
+            print(f"⚠️  RISK LEVEL: {risk}")
+            
+            issues = top.get("issues", [])
+            if issues:
+                 print(f"🚩  ISSUES: {', '.join(issues)}")
+            else:
+                 print(f"✨  Clean safety profile.")
+        else:
+            print("❌  No candidates to validate.")
+            
+        print("-" * 40)
+
+    except json.JSONDecodeError:
+        print("❌ Error: Could not parse regulator response.")
+        print(report)
+        ranked_result = {"error": "LLM output not valid JSON", "llm_output": report}
     except json.JSONDecodeError:
         ranked_result = {"error": "LLM output not valid JSON", "llm_output": report}
 

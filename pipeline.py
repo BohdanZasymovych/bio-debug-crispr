@@ -15,8 +15,12 @@ def run_diagnostician_pipeline(
     protein_structure_path, 
     api_key
 ):
+    print("\n" + "=" * 70)
+    print("🩺 DIAGNOSTICIAN AGENT - MUTATION ANALYSIS")
+    print("=" * 70)
 
     mutation_analysis = analyze_mutations(patient_dna_path,
+
         reference_path,
         annotation_path,
         clinvar_path,
@@ -34,6 +38,10 @@ def run_diagnostician_pipeline(
 
 
 def run_engineer_pipeline(diagnostician_reports, reference_path, api_key):
+    print("\n" + "=" * 70)
+    print("🧬 ENGINEER AGENT - CRISPR REPAIR DESIGN")
+    print("=" * 70)
+
     engineer_reports = {}
 
     for idx, diag_report in diagnostician_reports.items():
@@ -49,6 +57,10 @@ def run_engineer_pipeline(diagnostician_reports, reference_path, api_key):
 
 
 def run_regulator_pipeline(engineer_reports, api_key):
+    print("\n" + "=" * 70)
+    print("🛡️  REGULATOR AGENT - SAFETY VALIDATION")
+    print("=" * 70)
+
     regulator_reports = {}
     for idx, eng_report in engineer_reports.items():
         regulator_report = run_regulator_agent(eng_report, api_key)
