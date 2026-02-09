@@ -10,7 +10,8 @@ dependencies = [
     "anthropic",
     "python-dotenv",
     "streamlit",
-    "markdown"
+    "markdown",
+    "biopython"
 ]
 
 [tool.setuptools.packages.find]
