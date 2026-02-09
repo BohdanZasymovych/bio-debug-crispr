@@ -4,6 +4,7 @@ from tools.diagnostician_tools import analyze_mutations
 
 from agents.engineer import run_engineer_agent
 from agents.regulator import run_regulator_agent
+from agents.reporter import run_reporter_agent
 
 
 def run_diagnostician_pipeline(
@@ -99,7 +100,15 @@ def run_full_pipeline(
         for idx in diagnostician_reports
     }
     
+    # Run reporter agent to generate human-readable report
+    print("\n" + "=" * 70)
+    print("📝 REPORTER AGENT - CLINICAL REPORT GENERATION")
+    print("=" * 70)
+    
+    reporter_output = run_reporter_agent(final, api_key=api_key, enable_llm_polish=True)
+    report_md = reporter_output.get("report_md", "")
+    
     with open("results.json", 'w') as f:
         json.dump(final, f, indent=2, default=str)
 
-    return final
+    return {"results": final, "report_md": report_md}

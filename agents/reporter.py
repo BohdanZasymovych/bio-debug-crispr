@@ -1,9 +1,9 @@
-
 from __future__ import annotations
 
 from typing import Dict, Any, Optional
 import json
 import os
+import anthropic
 
 from tools.reporter_tools import build_markdown_report
 from prompts.reporter_prompt import REPORTER_SYSTEM_PROMPT
@@ -13,12 +13,6 @@ def polish_with_llm(markdown: str, api_key: str) -> Optional[str]:
     """
     DEBUG version: prints errors and forces a visible watermark.
     """
-    try:
-        import anthropic  # type: ignore
-    except ImportError as e:
-        print("[reporter] anthropic import ERROR:", repr(e))
-        return None
-
     try:
         client = anthropic.Anthropic(api_key=api_key)
 
@@ -30,7 +24,7 @@ def polish_with_llm(markdown: str, api_key: str) -> Optional[str]:
               "- Do not change any code blocks.\n"
         )
 
-        print("[reporter] Calling Anthropic API...")
+        # print("[reporter] Calling Anthropic API...")
 
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
@@ -48,13 +42,10 @@ def polish_with_llm(markdown: str, api_key: str) -> Optional[str]:
 
         polished = "\n".join(parts).strip()
 
-        print("[reporter] Anthropic response length:", len(polished))
-        print("[reporter] Anthropic response preview:", polished[:80].replace("\n", " ") + "...")
-
         return polished if polished else None
 
     except Exception as e:
-        print("[reporter] LLM polish ERROR:", repr(e))
+        print(f"❌ LLM polish failed: {repr(e)}")
         return None
 
 
@@ -69,26 +60,34 @@ def run_reporter_agent(
     - Optionally polishes it with an LLM (if api_key provided).
     """
     
+    num_variants = len(results) if isinstance(results, dict) else 0
+    print(f"📊 Building report for {num_variants} variant(s)...")
+    
     skeleton_md = build_markdown_report(results)
     final_md = skeleton_md
 
-    
     if enable_llm_polish and api_key:
-        print("[reporter] LLM polish: ON (api key detected)")
+        print("🤖 Polishing report with AI...")
         polished = polish_with_llm(skeleton_md, api_key)
 
         if polished:
-            print("[reporter] LLM polish: APPLIED (debug forced)")
             final_md = polished
+            print("✅ Report polished successfully.")
         else:
-            print("[reporter] LLM polish: FAILED -> fallback")
             final_md = skeleton_md
+            print("⚠️ Polish failed, using base report.")
     else:
-        print("[reporter] LLM polish: OFF (missing api key or disabled)")
+        print("📄 Using base report (no AI polish).")
+
+    # Report summary
+    print("\n📝 REPORT SUMMARY:")
+    print("-" * 40)
+    print(f"📋 Report length: {len(final_md)} characters")
+    print("-" * 40)
 
     return {
         "report_md": final_md,
-        "raw_results": results,  # keep for debug/judges; hide in normal UI
+        "raw_results": results,
     }
 
 
@@ -109,10 +108,10 @@ def main():
     out = run_reporter_agent(
         results,
         api_key=os.getenv("ANTHROPIC_API_KEY"),
-        enable_llm_polish=True,  # set True if you want polishing and have API key
+        enable_llm_polish=True,
     )
 
-    print(out["report_md"])
+    # print(out["report_md"])
 
 
 if __name__ == "__main__":

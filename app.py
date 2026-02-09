@@ -126,10 +126,16 @@ def main() -> None:
                 protein_struct_path="data/protein_structure.json",
                 api_key=api_key
             )
-            st.session_state.result_json = outputs
+            
+            # Extract results and report from pipeline output
+            results_data = outputs.get("results", outputs)
+            report_md = outputs.get("report_md", "")
+            
+            st.session_state.result_json = results_data
+            st.session_state.report_md = report_md
             
             # Post-process for UI highlights
-            annotations, diag_summary = diagnostician_to_ui(outputs)
+            annotations, diag_summary = diagnostician_to_ui(results_data)
             st.session_state.annotations = annotations
             st.session_state.diagnosis_summary = diag_summary
 
