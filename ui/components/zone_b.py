@@ -62,10 +62,10 @@ def render_zone_b(
             
         with col_btns:
              st.download_button(
-                "Download report.txt",
+                "Download report.md",
                 data=report_md if report_md else "No report generated.",
-                file_name="clinical_report.txt",
-                mime="text/plain",
+                file_name="clinical_report.md",
+                mime="text/markdown",
                 use_container_width=True
             )
              st.download_button(
@@ -80,7 +80,22 @@ def render_zone_b(
         if report_md:
             # Convert markdown to HTML and wrap in styled container
             report_html = markdown.markdown(report_md, extensions=['tables', 'fenced_code'])
-            st.markdown(f'<div class="report-container">{report_html}</div>', unsafe_allow_html=True)
+            # Force white text on all elements via inline style
+            styled_html = f'''
+            <div class="report-container" style="color: #ffffff !important;">
+                <style>
+                    .report-container, .report-container * {{
+                        color: #ffffff !important;
+                    }}
+                    .report-container pre, .report-container code {{
+                        color: #ffffff !important;
+                        background: rgba(255,255,255,0.1) !important;
+                    }}
+                </style>
+                {report_html}
+            </div>
+            '''
+            st.markdown(styled_html, unsafe_allow_html=True)
         else:
             st.warning("Report not generated.")
             
