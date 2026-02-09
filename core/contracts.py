@@ -29,73 +29,92 @@ def _safe_get(d: Dict[str, Any], path: List[str], default=None):
 # =========================
 # Agent 1 (Diagnostician)
 # =========================
-def diagnostician_to_ui(agent_json: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+def diagnostician_to_ui(pipeline_results: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Input (example):
+    Input: The 'final' dict from run_full_pipeline, keyed by mutation index (str or int).
+    Example:
     {
-      "diagnosis_report": {
-        "patient_id": "P-001",
-        "global_status": "ACTION_REQUIRED",
-        "findings": [
-          {"index": 70, "verdict": "CRITICAL", "reasoning": "..."},
-          {"index": 200, "verdict": "BENIGN", "reasoning": "..."}
-        ]
+      "123": {
+        "diagnostician": {
+          "diagnostic": { "index": 123, "risk_level": "Pathogenic", "reasoning": "..." },
+          "target_gene": "HBB", ...
+        }, ...
       }
     }
 
     Output:
-      annotations: [
-        { "index0": 69, "type": "critical", "tooltip": "...", "verdict": "...", "reasoning": "..." },
-        ...
-      ]
-      diagnosis_summary: {
-        "patient_id": "...",
-        "global_status": "...",
-        "critical_positions": [70, ...],
-        "findings_count": N
-      }
+      annotations: List of dicts for render_zone_a
+      diagnosis_summary: Dict for render_zone_b
     """
-    report = agent_json.get("diagnosis_report", {}) if isinstance(agent_json, dict) else {}
-    patient_id = report.get("patient_id", "P-001")
-    global_status = (report.get("global_status", "UNKNOWN") or "UNKNOWN").upper()
-    findings = report.get("findings", [])
-
     annotations: List[Dict[str, Any]] = []
     critical_positions: List[int] = []
+    total_findings = 0
+    
+    # Check if input is valid
+    if not isinstance(pipeline_results, dict):
+        return [], {}
 
-    if isinstance(findings, list):
-        for f in findings:
-            if not isinstance(f, dict):
+    for idx_val, mutation_report in pipeline_results.items():
+        # mutation_report corresponds to the dict with keys: 'diagnostician', 'engineer', 'regulator'
+        if not isinstance(mutation_report, dict):
+            continue
+            
+        diag_report = mutation_report.get("diagnostician", {})
+        if not diag_report:
+            continue
+            
+        # Extract diagnostic details
+        diag_data = diag_report.get("diagnostic", {})
+        pos = diag_data.get("index")
+        risk = (diag_data.get("risk_level") or "UNKNOWN").upper()
+        reasoning = diag_data.get("reasoning") or ""
+        
+        # Ensure we have a valid integer position
+        if pos is None:
+            # Fallback to key if needed, though safer to use internal index
+            try:
+                pos = int(idx_val)
+            except:
                 continue
-            pos = f.get("index")
-            verdict = (f.get("verdict") or "").upper()
-            reasoning = f.get("reasoning") or ""
+                
+        # Classify risk
+        ann_type = "benign"
+        if "PATHOGENIC" in risk:
+            ann_type = "critical" # Red
+        elif "BENIGN" in risk:
+            ann_type = "safe"     # Green
+        elif "NOVEL" in risk:
+            ann_type = "warning"  # Yellow
 
-            if not isinstance(pos, int):
-                continue
+        is_critical = ann_type == "critical"
+        
+        tooltip = f"Index: {pos}\nRisk: {risk}\nReason: {reasoning}"
+        
+        annotations.append({
+            "index0": to_zero_based(pos),
+            "type": ann_type,
+            "tooltip": tooltip,
+            "verdict": risk,
+            "reasoning": reasoning
+        })
+        
+        total_findings += 1
+        if is_critical:
+            critical_positions.append(pos)
 
-            ann_type = "critical" if verdict == "CRITICAL" else "benign"
-            if verdict == "CRITICAL":
-                critical_positions.append(pos)
-
-            tooltip = f"Index {pos} | {verdict}"
-            annotations.append({
-                "pos": pos,                 # original position from agent
-                "index0": to_zero_based(pos),# python index for rendering
-                "type": ann_type,            # "critical" | "benign"
-                "verdict": verdict,
-                "reasoning": reasoning,
-                "tooltip": tooltip,
-            })
+    # Sort annotations by index
+    annotations.sort(key=lambda x: x["index0"])
 
     diagnosis_summary = {
-        "patient_id": patient_id,
-        "global_status": global_status,
-        "critical_positions": sorted(set(critical_positions)),
-        "findings_count": len(findings) if isinstance(findings, list) else 0,
+        "global_status": "ACTION_REQUIRED" if critical_positions else "ALL_CLEAR",
+        "critical_positions": critical_positions,
+        "findings_count": total_findings
     }
-
+    
     return annotations, diagnosis_summary
+
+
+
 
 
 # =========================

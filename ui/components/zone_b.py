@@ -45,6 +45,40 @@ def render_zone_b(
     st.markdown('<div class="crispr-panel">', unsafe_allow_html=True)
     st.markdown("### ZONE B: THERAPY PLAN")
 
+    # Show final JSON result if available (even if diagnosis_summary is None)
+    final_result = st.session_state.get("result_json")
+    if final_result:
+        import json
+        json_str = json.dumps(final_result, indent=2, ensure_ascii=False)
+        
+        # Header + Buttons Layout
+        # Text on left (title), Buttons on right (more space for single line text)
+        col_txt, col_btns = st.columns([0.65, 0.35])
+        
+        with col_txt:
+            st.markdown("#### Full Agent Output JSON")
+            
+        with col_btns:
+             st.download_button(
+                "Download output.json",
+                data=json_str,
+                file_name="output.json",
+                mime="application/json",
+                use_container_width=True
+            )
+             # Dummy text download button
+             st.download_button(
+                "Download final report .txt",
+                data="Example report text...",
+                file_name="report.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+            
+        st.markdown(f'<div style="max-height: 400px; overflow-y: auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;"><pre style="margin: 0; color: #ffffff; font-family: monospace; font-size: 13px;">{json_str}</pre></div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+
     if not diagnosis_summary:
         st.info("No diagnosis yet. Run the analysis to generate a therapy plan.")
         st.markdown("</div>", unsafe_allow_html=True)

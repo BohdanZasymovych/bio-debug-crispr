@@ -9,10 +9,11 @@ def render_header() -> bool:
     Header row with title and RESET button.
     Returns True if RESET was clicked.
     """
-    col_title, col_btn = st.columns([5, 1], vertical_alignment="center")
+    # Use spacing to push button to the far right
+    col_title, col_space, col_btn = st.columns([6, 3, 1], vertical_alignment="center")
 
     with col_title:
-        st.markdown("## 🧬 CRISPR-OS: Agentic Gene Editor")
+        st.markdown("## 🧬 BIO-DEBUG: Agentic Gene Editor")
 
     with col_btn:
         reset_clicked = st.button("RESET", type="secondary")
