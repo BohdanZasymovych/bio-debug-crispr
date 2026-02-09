@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import streamlit as st
+import markdown
 from typing import Any, Dict, Optional
 
 
@@ -45,20 +46,28 @@ def render_zone_b(
     st.markdown('<div class="crispr-panel">', unsafe_allow_html=True)
     st.markdown("### ZONE B: THERAPY PLAN")
 
-    # Show final JSON result if available (even if diagnosis_summary is None)
+    # Show final result if available (even if diagnosis_summary is None)
     final_result = st.session_state.get("result_json")
+    report_md = st.session_state.get("report_md", "")
+    
     if final_result:
         import json
         json_str = json.dumps(final_result, indent=2, ensure_ascii=False)
         
         # Header + Buttons Layout
-        # Text on left (title), Buttons on right (more space for single line text)
-        col_txt, col_btns = st.columns([0.65, 0.35])
+        col_txt, col_btns = st.columns([0.55, 0.45])
         
         with col_txt:
-            st.markdown("#### Full Agent Output JSON")
+            st.markdown("#### Clinical Report")
             
         with col_btns:
+             st.download_button(
+                "Download report.txt",
+                data=report_md if report_md else "No report generated.",
+                file_name="clinical_report.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
              st.download_button(
                 "Download output.json",
                 data=json_str,
@@ -66,16 +75,15 @@ def render_zone_b(
                 mime="application/json",
                 use_container_width=True
             )
-             # Dummy text download button
-             st.download_button(
-                "Download final report .txt",
-                data="Example report text...",
-                file_name="report.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
+        
+        # Display report markdown in a scrollable container
+        if report_md:
+            # Convert markdown to HTML and wrap in styled container
+            report_html = markdown.markdown(report_md, extensions=['tables', 'fenced_code'])
+            st.markdown(f'<div class="report-container">{report_html}</div>', unsafe_allow_html=True)
+        else:
+            st.warning("Report not generated.")
             
-        st.markdown(f'<div style="max-height: 400px; overflow-y: auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;"><pre style="margin: 0; color: #ffffff; font-family: monospace; font-size: 13px;">{json_str}</pre></div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         return
 

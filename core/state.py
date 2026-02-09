@@ -15,6 +15,7 @@ def init_session_state() -> None:
         "status": "idle",          # idle | running | done | error
         "events": [],              # list[dict]
         "result_json": None,       # dict | None
+        "report_md": "",           # markdown clinical report from reporter agent
         "annotations": [],         # list[dict] for DNA visualizer
         "ui_locked": False,        # prevents editing while running
         "agent_logs": [],          # list[str] for backend logs
@@ -34,6 +35,7 @@ def reset_session_state() -> None:
     st.session_state.status = "idle"
     st.session_state.events = []
     st.session_state.result_json = None
+    st.session_state.report_md = ""
     st.session_state.annotations = []
     st.session_state.ui_locked = False
     st.session_state.agent_logs = []

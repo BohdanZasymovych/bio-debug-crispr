@@ -337,3 +337,72 @@ div[data-testid="stDownloadButton"] button * {
    color: #ffffff !important;
    border-color: rgba(255,255,255,0.3) !important;
 }
+
+/* ===== CLINICAL REPORT CONTAINER ===== */
+.report-container {
+  max-height: 500px;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  color: #ffffff !important;
+}
+
+/* Report text styling for dark background */
+.report-container h1,
+.report-container h2,
+.report-container h3,
+.report-container h4,
+.report-container h5,
+.report-container h6 {
+  color: #ffffff !important;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.report-container p,
+.report-container li,
+.report-container span {
+  color: #ffffff !important;
+}
+
+.report-container code {
+  background: rgba(255,255,255,0.1) !important;
+  color: #ffffff !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+}
+
+.report-container pre {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.report-container pre code {
+  background: transparent !important;
+  color: #ffffff !important;
+  padding: 0;
+}
+
+.report-container strong,
+.report-container b {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.report-container ul,
+.report-container ol {
+  margin-left: 1.5em;
+  color: #ffffff !important;
+}
+
+.report-container hr {
+  border-color: rgba(255,255,255,0.1);
+  margin: 1em 0;
+}
